@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+AUERR = copyexp(curdat);
+QUIT
+
+// MAIN
+
+int copyexp (const char* curdat)
+{
+char nameofdataset[100];
+int i1 = 10; 
+
+int eno = expno;
+int pno = procno; 
+int num1 = eno;
+
+GETCURDATA;
+GETINT("Please enter the number of experiments:", i1)
+GETINT("Please enter the first expno:", eno)
+GETSTRING("Please enter the name of new dataset:", nameofdataset)
+	for (num1 ; num1 < eno + i1; num1++) 
+	{ 
+		WRPA(nameofdataset,num1, pno, "/Users/tiagopaiva/Bruker Topspin/data/PhD/nmr", PhD)
+  }	 
+return 0; 
+}
+
+

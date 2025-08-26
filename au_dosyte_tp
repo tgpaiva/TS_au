@@ -1,0 +1,33 @@
+/*** ^^A -*-C++-*- **********************************************/
+/*	au_zgte			10.10.1990			*/
+/****************************************************************/
+/*	Short Description :					*/
+/*	Acquisition with temperature setting.			*/
+/****************************************************************/
+/*	Keywords :						*/
+/*	teset, temperature setting				*/
+/****************************************************************/
+/*	Description/Usage :					*/
+/*	AU program which sets the temperature before the	*/
+/*	acquisition is started. The temperature is taken from	*/
+/*	the parameter TE.					*/
+/****************************************************************/
+/*	Author(s) :						*/
+/*	Name		: Peter Dvortsak			*/
+/*	Organisation	: Bruker Analytik			*/
+/*	Email		: peter.dvortsak@bruker.de		*/
+/****************************************************************/
+/*	Name		Date	Modification:			*/
+/*	pdv		901010	created				*/
+/****************************************************************/
+/*
+$Id: au_zgte,v 1.5 2000/07/12 11:39:40 gsc Exp $
+*/
+
+GETCURDATA
+TESET
+TEREADY(600,0.1)
+XCMD("dosy 10 80 32 l n n")
+RGA
+ZG
+QUIT

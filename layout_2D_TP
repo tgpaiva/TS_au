@@ -1,0 +1,32 @@
+
+#include <inc/layout_package>
+
+char plotname[1024];
+char portfname[1024];
+char cmdname[1024];
+LAYOUT_FORMAT 		my_format = LAYOUT_FORMAT_DEFAULTS;
+LAYOUT_OBJ_2D 		my_obj = LAYOUT_2D_DEFAULTS;
+LAYOUT_OBJ_TITLE	my_title = LAYOUT_TITLE_DEFAULTS;
+LAYOUT_OBJ_PARAMETERS	my_param = LAYOUT_PARAMETERS_DEFAULTS;
+
+sprintf(plotname, "%s/plot-output.xwp", PathSystemHome());
+STOREPAR("LAYOUT", plotname);
+
+LAYOUT_BEGIN_FILE(plotname, my_format);
+LAYOUT_ADD(my_title);
+my_obj.projTop.dataSetNumber = 2;	/* Show same projection on top and left */
+my_obj.projLeft.dataSetNumber = 2;
+LAYOUT_ADD_2D_OBJECT(my_obj);
+LAYOUT_ADD(my_param);
+LAYOUT_END_FILE
+
+/* Provide a portfolio with 2D, and one 1D data set used as projection */
+sprintf(portfname, "%s/portfolio.por", PathSystemHome());
+CREATE_PORTFOLIO(portfname)
+ADD_TO_PORTFOLIO("c:/bruker/topspin", "guest", "exam2d_HH", 1, 1)
+ADD_TO_PORTFOLIO("c:/bruker/topspin", "guest", "exam1d_1H", 1, 1)
+CLOSE_PORTFOLIO
+
+sprintf(cmdname, "plot -r -p \"%s\"", portfname);  /* For Unix use "plot -r -p %s" */
+CPR_exec(cmdname, WAIT_TERM);
+QUIT

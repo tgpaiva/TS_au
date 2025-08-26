@@ -1,0 +1,9 @@
+#include <stdio.h>
+
+char name[256];
+char command[256];
+
+GETSTRING("enter file name: ", name);
+sprintf(command, "sendgui tozip -d /Users/tiagopaiva/Desktop/%s.zip", name);
+XCMD(command)
+QUIT

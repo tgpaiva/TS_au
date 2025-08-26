@@ -1,0 +1,99 @@
+AUERR = local_au(curdat);
+QUITMSG("--- multizg finished ---")
+
+#include <inc/exptUtil>
+#include <stdio.h>
+#include <string.h>
+
+static char stopau[PATH_MAX];
+static int multizg(const char* curdat)
+{
+  char statusline[128];
+  FILE* fp;
+  int expTime = 0;
+  int i1 = 0;
+  int startExpno = expno;
+  char  pulprog[64];
+  char pul[64] = "ledbpgp2s";
+  char nuc1[100];
+  char nuc2[100];
+  if (i_argc > 2)
+    i1 = atoi(i_argv[2]);
+
+  if (i1 == 0)
+  {
+    i1 = 10;
+    GETINT("Enter number of experiments :",i1)
+  }
+
+  sprintf(stopau, "%s/%s/%s",
+	  PathXWinNMRProg(), PathXWinNMRCurDir(), "poptaustop.acq");
+  fp = fopen(stopau, "w");
+  if (fp)
+    fclose(fp);
+				/* now perform the experiments  */
+  TIMES(i1)
+    SETCURDATA
+    expTime += CalcExpTime() + 2;
+    IEXPNO
+  END
+  DEXPNO
+  PrintExpTime(expTime, i1);
+
+  expno = startExpno;
+  SETCURDATA
+  FETCHPAR("NUC1",nuc1);
+  TIMES(i1)
+    if (fp  &&  access(stopau, F_OK))
+      return 0;
+    sprintf(statusline,"running experiment # %d",loopcount1+1);
+    Show_status(statusline);
+    sleep(2);
+    FETCHPAR("NUC1",nuc2);
+    if (strcmp(nuc1,nuc2) == 0)
+    {
+    FETCHPARS("PULPROG",pulprog);
+    if (strcmp(pulprog,pul) == 0)
+    {
+			XCMD("dosy 5 95 32 l n n")
+		  RGA
+		  ZG
+		 }
+		else
+		{
+		  RGA
+		  ZG
+    }
+    IEXPNO
+		}
+		else
+		{
+    FETCHPARS("PULPROG",pulprog);
+    if (strcmp(pulprog,pul) == 0)
+    { 
+    	ATMA
+			XCMD("dosy 5 95 32 l n n")
+		  RGA
+		  ZG
+		 }
+		else
+		{
+			ATMA
+		  RGA
+		  ZG
+    }
+    IEXPNO
+		}
+		
+  END
+  DEXPNO
+  return 0;
+}
+
+int local_au(const char* curdat)
+{
+  int ret = multizg(curdat);
+  if (stopau[0])
+    unlink(stopau);
+  return ret;
+}

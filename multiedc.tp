@@ -1,0 +1,77 @@
+
+AUERR = local_au(curdat);
+QUITMSG("--- multiedc finished ---")
+
+#include <inc/exptUtil>
+#include <stdio.h>
+
+static char stopau[PATH_MAX];
+
+
+static int multiedc(const char* curdat)
+{
+  char statusline[128];
+  FILE* fp;
+  int expTime = 0;
+  int i1 = 0;
+  int step = 0;
+  int startExpno = expno;
+
+  if (i_argc > 2)
+    i1 = atoi(i_argv[2]);
+  if (i1 == 0)
+  {
+    i1 = 10;
+    GETINT("Enter number of experiments :",i1)
+  }
+  
+  if (i_argc > 3)
+		step = atoi(i_argv[3]);  
+  if (step == 0)
+  {
+    step = 1;
+    GETINT("Enter EDC step:", step)
+  }
+  
+  sprintf(stopau, "%s/%s/%s",
+	  PathXWinNMRProg(), PathXWinNMRCurDir(), "poptaustop.acq");
+  fp = fopen(stopau, "w");
+  if (fp)
+    fclose(fp);
+    
+/* now create the experiments  */
+				
+  TIMES(i1)
+    SETCURDATA
+    if (step == 1)
+    {
+    IEXPNO
+    }
+    else if (step == 2)
+    {
+    IEXPNO
+    IEXPNO
+    }
+    else if (step == 3)
+    {
+    IEXPNO
+    IEXPNO
+    IEXPNO
+    }
+    else
+    STOPMSG(" step must be 1, 2 or 3 ")
+  END
+  DEXPNO
+
+  return 0;
+}
+
+int local_au(const char* curdat)
+{
+  int ret = multiedc(curdat);
+
+  if (stopau[0])
+    unlink(stopau);
+
+  return ret;
+}
